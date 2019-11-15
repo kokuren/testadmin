@@ -11,7 +11,7 @@
   <script type="text/javascript">
     function getnews() {
       var title = $("[name='title']").val();
-      var url = "http://192.168.100.8:45455/GetAll/getall?operation=1";
+      var url = "http://192.168.100.8:45457/GetAll/getall?operation=1";
       $.get(url, function(data, status) {
         //if (status==success) {
         document.getElementById("demo").innerHTML = data;
@@ -22,7 +22,7 @@
     }
     function getevent() {
       var title = $("[name='title']").val();
-      var url = "http://192.168.100.8:45455/GetAll/getall?operation=2";
+      var url = "http://192.168.100.8:45457/GetAll/getall?operation=2";
       $.get(url, function(data, status) {
         //if (status==success) {
         document.getElementById("demo2").innerHTML = data;
