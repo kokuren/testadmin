@@ -4,70 +4,266 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-  <link rel="stylesheet" href="js/jquery.mobile-1.4.5.min.css">
-  <script src="js/jquery.min.js"></script>
-  <script src="js/jquery.mobile-1.4.5.min.js"></script>
+  <title>Admin</title>
   <script type="text/javascript" src="cordova.js"></script>
- <script type="text/javascript">
-    function getnews() {
-      var title = $("[name='title']").val();
-      var url = "http://192.168.100.8:45457/GetAll/getall?operation=1";
-      alert("inNews" + url);
-
-      // $.get(url, function(data, status) {
-      //   //if (status==success) {
-      //   alert(status);
-      //   document.getElementById("demo").innerHTML = data;
-      //     //$('#demo').html(data);
-      //   //}
-      //
-      // });
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-
-          if (this.readyState == 4 && this.status == 200) {
-            // Typical action to be performed when the document is ready:
-            document.getElementById("demo").innerHTML = xhttp.responseText;
-          }
-         else {
-  alert('some error');
-
-        }
-      };
-      xhttp.open("GET", url, true);
-      xhttp.send();
-
-
-
-
-
-    }
-
+  <link rel="stylesheet" href="js/jquery.mobile-1.4.5.min.css">
+  <link rel="stylesheet" href="boot/bootstrap.min.css">
+  <script src="js/jquery.min.js"></script>
+  <script src="boot/bootstrap.min.js"></script>
+  <script src="js/jquery.mobile-1.4.5.min.js"></script>
+  <script type="text/javascript">
+    //window.onload = function what() {
+    //  };
     function getevent() {
-      var title = $("[name='title']").val();
-      var url = "http://localhost:54699/GetAll/getall?operation=2";
+      var result_key = "";
+      var z = "";
+      var url = "http://192.168.100.8:45455/GetAll/getall?operation=2";
       $.get(url, function(data, status) {
-        //if (status==success) {
-        document.getElementById("demo2").innerHTML = data;
-        //$('#demo').html(data);
-        //}
+        var jsonarr = JSON.parse(data);
+        console.log(jsonarr[0]);
+        for (var i = 0; i < jsonarr.length; i++) {
+          // var ii = '';
+          // var next = '';
+          // var prev = '';
+          // var title = '';
+          // var Content = '';
+          // var pby = '';
+          // var dept = '';
+          // var date = '';
+          // var imgsrc = '';
+
+          var ii = i + 2;
+          var next = ii + 1;
+          var prev = ii - 1;
+          var title = jsonarr[i].title;
+          var Content = jsonarr[i].content;
+          var pby = jsonarr[i].author;
+          var dept = jsonarr[i].department;
+          var date = jsonarr[i].image;
+          var imgsrc = jsonarr[i].time;
+
+          var newvid = '<div data-role="page" id="epage' + ii + '" class="demo-page" data-dom-cache="true" data-theme="b" data-prev=epage' + prev + '" data-next=epage' + next +
+            '" data-url="city"><div data-role="header"><h1><b>Event & News</b></h1><div data-role="navbar"><ul><li><a href="#epage1" class="ui-btn-active ui-state-persist" data-icon="grid" dataicon="grid">Event</a></li><li><a href="#page2" data-icon="home">Home</a></li><li><a href="#npage1" data-icon="info">News</a></li></ul></div></div><div data-role="main" class="ui-content"><h2>' +
+            title + '</h2><h6>' + Content +
+            '</h6><div class="map"></div><a href="#popupPhotoPortrait" data-rel="popup" data-position-to="window" class="ui-btn ui-corner-all ui-shadow " data-transition="pop">View Poster</a><div data-role="popup" id="popupPhotoPortrait" class="photopopup" data-overlay-theme="a" data-corners="false" data-tolerance="30,15"><a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a><img src="' +
+            imgsrc + '" alt="Photo portrait"></div></div><div data-role="footer" class="container"><div class="row"><div class="col-6"><h6>Posted by: ' + pby + '</h6></div><div class="col-6"><h6>Date: ' + date +
+            '</h6></div></div><div class="row"><div class="col-6"><h6>' + dept + '</h6></div><div class="col-6"><h6>End Date:</h6></div></div></div></div>';
+          document.body.innerHTML += newvid;
+          //}
+        }
 
       });
     }
-      
   </script>
-  <title>Blank App</title>
+  <script type="text/javascript">
+    // Pagecreate will fire for each of the pages in this demo
+    // but we only need to bind once so we use "one()"
+    //
+    $(document).one("pagecreate", ".demo-page", function() {
+      // Initialize the external persistent header and footer
+      $("#header").toolbar({
+        theme: "b"
+      });
+      $("#footer").toolbar({
+        theme: "b"
+      });
+      // Handler for navigating to the next page
+      function navnext(next) {
+        $(":mobile-pagecontainer").pagecontainer("change", "#" + next + "", {
+          transition: "slide"
+        });
+      }
+      // Handler for navigating to the previous page
+      function navprev(prev) {
+        $(":mobile-pagecontainer").pagecontainer("change", "#" + prev + "", {
+          transition: "slide",
+          reverse: true
+        });
+      }
+      // Navigate to the next page on swipeleft
+      $(document).on("swipeleft", ".ui-page", function(event) {
+        // Get the filename of the next page. We stored that in the data-next
+        // attribute in the original markup.
+        var next = $(this).jqmData("next");
+        // Check if there is a next page and
+        // swipes may also happen when the user highlights text, so ignore those.
+        // We're only interested in swipes on the page.
+        if (next && (event.target === $(this)[0])) {
+          navnext(next);
+        }
+      });
+      // Navigate to the next page when the "next" button in the footer is clicked
+      $(document).on("click", ".next", function() {
+        var next = $(".ui-page-active").jqmData("next");
+        // Check if there is a next page
+        if (next) {
+          navnext(next);
+        }
+      });
+      // The same for the navigating to the previous page
+      $(document).on("swiperight", ".ui-page", function(event) {
+        var prev = $(this).jqmData("prev");
+        if (prev && (event.target === $(this)[0])) {
+          navprev(prev);
+        }
+      });
+      $(document).on("click", ".prev", function() {
+        var prev = $(".ui-page-active").jqmData("prev");
+        if (prev) {
+          navprev(prev);
+        }
+      });
+    });
+    $(document).on("pageshow", ".demo-page", function() {
+      var thePage = $(this),
+        title = thePage.jqmData("title"),
+        next = thePage.jqmData("next"),
+        prev = thePage.jqmData("prev");
+      // Point the "Trivia" button to the popup for the current page.
+      $("#trivia-button").attr("href", "#" + thePage.find(".trivia").attr("id"));
+      // We use the same header on each page
+      // so we have to update the title
+      $("#header h1").text(title);
+      // Prefetch the next page
+      // We added data-dom-cache="true" to the page so it won't be deleted
+      // so there is no need to prefetch it
+      if (next) {
+        $(":mobile-pagecontainer").pagecontainer("load", next + ".html");
+      }
+      // We disable the next or previous buttons in the footer
+      // if there is no next or previous page
+      // We use the same footer on each page
+      // so first we remove the disabled class if it is there
+      $(".next.ui-state-disabled, .prev.ui-state-disabled").removeClass("ui-state-disabled");
+      if (!next) {
+        $(".next").addClass("ui-state-disabled");
+      }
+      if (!prev) {
+        $(".prev").addClass("ui-state-disabled");
+      }
+    });
+  </script>
 </head>
 
 <body>
-  <!-- <form> -->
-      <!-- <label class="ui-hidden-accessible">title</label>
-      <input name="title" type="text" placeholder="title" /> -->
-      <input type="button" value="Get News" onclick="getnews()"/>
-      <input type="button" value="Get Event" onclick="getevent()"/>
-  <!-- </form> -->
-  <p id="demo"></p>
-<p id="demo2"></p>
+  <div data-role="page" id="epage1" class="demo-page" data-dom-cache="true" data-theme="b" data-prev="prevCity" data-next="epage2" data-url="city">
+    <div data-role="header">
+      <h1><b>Event</b></h1>
+      <div data-role="navbar">
+        <ul>
+          <li><a href="#epage1" class="ui-btn-active ui-state-persist" data-icon="grid" dataicon="home">Event</a></li>
+          <li><a href="#page2" data-icon="home">Home</a></li>
+          <li><a href="#npage1" data-icon="info">News</a></li>
+        </ul>
+      </div>
+    </div>
+    <div data-role="main" class="ui-content">
+      <h2>title</h2>
+      <h6>Content</h6>
+      <div class="map"></div>
+
+      <a href="#popupPhotoPortrait" data-rel="popup" data-position-to="window" class="ui-btn ui-corner-all ui-shadow " data-transition="pop">View Poster</a>
+      <div data-role="popup" id="popupPhotoPortrait" class="photopopup" data-overlay-theme="a" data-corners="false" data-tolerance="30,15">
+            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a><img src="https://demos.jquerymobile.com/1.4.5/_assets/img/photo-portrait.jpg" alt="Photo portrait">
+      </div>
+    </div>
+
+    <div data-role="footer" class="container">
+      <div class="row">
+        <div class="col-6">
+          <h6>Posted by: </h6>
+        </div>
+        <div class="col-6">
+          <h6>Date:</h6>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <h6>Dept</h6>
+        </div>
+        <div class="col-6">
+          <h6>End Date:</h6>
+        </div>
+      </div>
+      <a href="#epage2" class="ui-btn ui-mini float-right">Next</a>
+    </div>
+
+  </div>
+  <script type="text/javascript">
+    //getevent();
+    var result_key = "";
+    var z = "";
+    var url = "http://localhost:54698/GetAll/getall?operation=2";
+    $.get(url, function(data, status) {
+      var jsonarr = JSON.parse(data);
+      console.log(jsonarr[0]);
+      for (var i = 0; i < jsonarr.length; i++) {
+        // var ii = '';
+        // var next = '';
+        // var prev = '';
+        // var title = '';
+        // var Content = '';
+        // var pby = '';
+        // var dept = '';
+        // var date = '';
+        // var imgsrc = '';
+
+        var ii = i + 2;
+        var next = ii + 1;
+        var prev = ii - 1;
+        var title = jsonarr[i].title;
+        var Content = jsonarr[i].content;
+        var pby = jsonarr[i].author;
+        var dept = jsonarr[i].department;
+        var date = jsonarr[i].time;
+        var imgsrc = jsonarr[i].image;
+
+        var newvid = '<div data-role="page" id="epage' + ii + '" class="demo-page" data-dom-cache="true" data-theme="b" data-prev=epage' + prev + '" data-next=epage' + next +
+          '" data-url="city"><div data-role="header"><h1><b>Event & News</b></h1><div data-role="navbar"><ul><li><a href="#epage1" class="ui-btn-active ui-state-persist" data-icon="grid" dataicon="grid">Event</a></li><li><a href="#page2" data-icon="home">Home</a></li><li><a href="#npage1" data-icon="info">News</a></li></ul></div></div><div data-role="main" class="ui-content"><h2>' +
+          title + '</h2><h6>' + Content +
+          '</h6><div class="map"></div><a href="#popupPhotoPortrait" data-rel="popup" data-position-to="window" class="ui-btn ui-corner-all ui-shadow " data-transition="pop">View Poster</a><div data-role="popup" id="popupPhotoPortrait" class="photopopup" data-overlay-theme="a" data-corners="false" data-tolerance="30,15"><a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a><img src="' +
+          imgsrc + '" alt="Photo portrait"></div></div><div data-role="footer" class="container"><div class="row"><div class="col-6"><h6>Posted by: ' + pby + '</h6></div><div class="col-6"><h6>Date: ' + date +
+          '</h6></div></div><div class="row"><div class="col-6"><h6>' + dept + '</h6></div><div class="col-6"><h6>End Date:</h6></div></div></div><a href=#epage'+prev+' class="ui-btn ui-mini float-left">Prev</a><a href=#epage'+next+' class="ui-btn ui-mini float-right">Next</a></div>';
+        document.body.innerHTML += newvid;
+        //}
+        //}
+      }
+    });
+  </script>
+  <div data-role="page" id="page2" data-theme="a">
+    <div data-role="header">
+      <h1><b>Event & News</b></h1>
+      <div data-role="navbar">
+        <ul>
+          <li><a href="#epage1" class="ui-btn-active ui-state-persist" data-icon="grid" dataicon="home">Event</a></li>
+          <li><a href="#page2" data-icon="home">Home</a></li>
+          <li><a href="#npage1" data-icon="info">News</a></li>
+        </ul>
+      </div>
+    </div>
+    <div role="main" class="ui-content">
+      <p>Here some text.2</p>
+          
+    </div>
+  </div>
+
+  <div data-role="page" id="npage1" class="demo-page" data-dom-cache="true" data-theme="b" data-prev="" data-next="npage2" data-url="city">
+    <div data-role="header">
+      <h1><b>News</b></h1>
+      <div data-role="navbar">
+        <ul>
+          <li><a href="#epage1" class="ui-btn-active ui-state-persist" data-icon="grid" dataicon="home">Event</a></li>
+          <li><a href="#page2" data-icon="home">Home</a></li>
+          <li><a href="#npage1" data-icon="info">News</a></li>
+        </ul>
+      </div>
+    </div>
+    <div role="main" class="ui-content">
+      <p>news 1 </p>
+          
+    </div>
+  </div>
 </body>
 
 </html>
+
